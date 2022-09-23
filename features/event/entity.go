@@ -4,7 +4,7 @@ import "time"
 
 type Core struct {
 	ID           uint      `json:"id"`
-	ActivityType string    `json:"activity type"`
+	ActivityType string    `json:"activityType"`
 	Institution  string    `json:"institution"`
 	When         time.Time `json:"when"`
 	Objective    string    `json:"objective"`
