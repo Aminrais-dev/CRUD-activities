@@ -97,7 +97,7 @@ func (delivery *ActivitiesDelivery) PutDataAct(c echo.Context) error {
 		add.Remarks = dataUpdate.Remarks
 	}
 	if dataUpdate.When == "" {
-		date, _ := time.Parse(layout, dataUpdate.When)
+		date, _ := time.Parse(time.RFC3339, dataUpdate.When)
 		add.When = date
 	}
 

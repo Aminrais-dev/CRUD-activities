@@ -13,10 +13,8 @@ type Request struct {
 	Remarks      string `json:"remarks" form:"remaks"`
 }
 
-var layout = "2022-04-01T18:25:43.511Z"
-
 func (req *Request) toCoreAct() event.Core {
-	date, _ := time.Parse(layout, req.When)
+	date, _ := time.Parse(time.RFC3339, req.When)
 	activitiesCore := event.Core{
 		ActivityType: req.ActivityType,
 		Institution:  req.Institution,

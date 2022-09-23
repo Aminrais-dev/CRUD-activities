@@ -42,17 +42,13 @@ func (repo *activitiesData) SelectById(param int) (event.Core, error) {
 
 func (repo *activitiesData) CreateData(data event.Core) (event.Core, error) {
 	dataModel := fromCore(data)
-	tx := repo.DB.Create(&dataModel)
-	if tx.Error != nil {
-		return event.Core{}, tx.Error
-	}
-	if tx.RowsAffected == 0 {
-		return event.Core{}, tx.Error
-	}
+	_ = repo.DB.Transaction(func(tx *gorm.DB) error {
+		tx.Create(&dataModel)
+		return nil
+	})
 
 	var dataReturn Activities
-	repo.DB.Where("activity_type = ? AND institution = ? AND when = ? AND remarks = ? AND objective = ? ", dataModel.ActivityType, dataModel.Institution, dataModel.When, dataModel.Remarks, dataModel.Objective).First(&dataReturn)
-
+	repo.DB.First(&dataReturn, "id = ? ", dataModel.ID)
 	return dataReturn.toCore(), nil
 
 }
