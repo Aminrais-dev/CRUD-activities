@@ -6,7 +6,7 @@ import (
 )
 
 type Request struct {
-	ActivityType string `json:"activity type" form:"activity type"`
+	ActivityType string `json:"activityType" form:"activityType"`
 	Institution  string `json:"institution" form:"institution"`
 	When         string `json:"when" form:"when"`
 	Objective    string `json:"objective" form:"objective"`
