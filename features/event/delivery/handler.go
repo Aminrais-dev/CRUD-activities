@@ -4,6 +4,7 @@ import (
 	"project/e-commerce/features/event"
 	"project/e-commerce/utils/helper"
 	"strconv"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -29,14 +30,14 @@ func (delivery *ActivitiesDelivery) PostData(c echo.Context) error {
 	var dataProduct Request
 	errBind := c.Bind(&dataProduct)
 	if errBind != nil {
-		return c.JSON(400, helper.FailedResponseHelper("error bind"))
+		return c.JSON(400, "error bind")
 	}
 
-	row := delivery.activitiesUsecase.PostData(dataProduct.toCoreAct())
-	if row == -1 {
-		return c.JSON(400, helper.FailedResponseHelper("error insert data"))
+	data, err := delivery.activitiesUsecase.PostData(dataProduct.toCoreAct())
+	if err != nil {
+		return c.JSON(400, "error insert data")
 	}
-	return c.JSON(201, helper.SuccessResponseHelper("success insert data"))
+	return c.JSON(201, data)
 
 }
 
@@ -44,10 +45,12 @@ func (delivery *ActivitiesDelivery) GetAllData(c echo.Context) error {
 
 	data, err := delivery.activitiesUsecase.GetAll()
 	if err != nil {
-		return c.JSON(400, helper.FailedResponseHelper("error get all data"))
+		return c.JSON(400, "failed get all data")
 	}
 
-	return c.JSON(200, helper.SuccessDataResponseHelper("success get all data", toRespon(data)))
+	return c.JSON(200, map[string]interface{}{
+		"activities": data,
+	})
 
 }
 
@@ -56,7 +59,7 @@ func (delivery *ActivitiesDelivery) GetByIdData(c echo.Context) error {
 	id := c.Param("id")
 	ID, err := strconv.Atoi(id)
 	if err != nil {
-		return c.JSON(400, helper.FailedResponseHelper("param must be number"))
+		return c.JSON(400, "param must be number")
 	}
 
 	data, errGet := delivery.activitiesUsecase.GetById(ID)
@@ -64,7 +67,7 @@ func (delivery *ActivitiesDelivery) GetByIdData(c echo.Context) error {
 		return c.JSON(400, helper.FailedResponseHelper("error get by id data"))
 	}
 
-	return c.JSON(200, helper.SuccessDataResponseHelper("success get all data", data))
+	return c.JSON(200, data)
 
 }
 
@@ -94,15 +97,16 @@ func (delivery *ActivitiesDelivery) PutDataAct(c echo.Context) error {
 		add.Remarks = dataUpdate.Remarks
 	}
 	if dataUpdate.When == "" {
-		add.When = dataUpdate.When
+		date, _ := time.Parse(layout, dataUpdate.When)
+		add.When = date
 	}
 
 	add.ID = uint(id)
 
-	row := delivery.activitiesUsecase.PutData(add)
-	if row == -1 {
+	data, errUpd := delivery.activitiesUsecase.PutData(add)
+	if errUpd != nil {
 		return c.JSON(400, helper.FailedResponseHelper("error update data"))
 	}
 
-	return c.JSON(200, helper.SuccessResponseHelper("Success update data"))
+	return c.JSON(200, data)
 }

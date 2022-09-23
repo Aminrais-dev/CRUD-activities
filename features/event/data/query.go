@@ -40,26 +40,37 @@ func (repo *activitiesData) SelectById(param int) (event.Core, error) {
 	return data.toCore(), nil
 }
 
-func (repo *activitiesData) CreateData(data event.Core) int {
+func (repo *activitiesData) CreateData(data event.Core) (event.Core, error) {
 	dataModel := fromCore(data)
 	tx := repo.DB.Create(&dataModel)
 	if tx.Error != nil {
-		return -1
+		return event.Core{}, tx.Error
 	}
-	return int(tx.RowsAffected)
+	if tx.RowsAffected == 0 {
+		return event.Core{}, tx.Error
+	}
+
+	var dataReturn Activities
+	repo.DB.Where("activity_type = ? AND institution = ? AND when = ? AND remarks = ? AND objective = ? ", dataModel.ActivityType, dataModel.Institution, dataModel.When, dataModel.Remarks, dataModel.Objective).First(&dataReturn)
+
+	return dataReturn.toCore(), nil
+
 }
 
-func (repo *activitiesData) UpdateData(newData event.Core) int {
+func (repo *activitiesData) UpdateData(newData event.Core) (event.Core, error) {
 
 	dataModel := fromCore(newData)
 
 	tx := repo.DB.Model(&Activities{}).Where("id = ? ", newData.ID).Updates(dataModel)
 	if tx.Error != nil {
-		return -1
+		return event.Core{}, tx.Error
 	}
 	if tx.RowsAffected == 0 {
-		return -1
+		return event.Core{}, tx.Error
 	}
 
-	return 1
+	var data Activities
+	repo.DB.First(&data, "id = ? ", newData.ID)
+
+	return data.toCore(), nil
 }

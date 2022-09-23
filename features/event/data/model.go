@@ -2,6 +2,7 @@ package data
 
 import (
 	"project/e-commerce/features/event"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -10,7 +11,7 @@ type Activities struct {
 	gorm.Model
 	ActivityType string
 	Institution  string
-	When         string
+	When         time.Time
 	Objective    string
 	Remarks      string
 }

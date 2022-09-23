@@ -30,25 +30,25 @@ func (usecase *activitiesUsecase) GetById(id int) (event.Core, error) {
 	return data, nil
 }
 
-func (usecase *activitiesUsecase) PostData(data event.Core) int {
-	if data.ActivityType == "" || data.Institution == "" || data.Objective == "" || data.Remarks == "" || data.When == "" {
-		return -1
+func (usecase *activitiesUsecase) PostData(data event.Core) (event.Core, error) {
+	if data.ActivityType == "" || data.Institution == "" || data.Objective == "" || data.Remarks == "" {
+		return event.Core{}, nil
 	}
 
-	row := usecase.activitiesData.CreateData(data)
-	if row == -1 {
-		return -1
+	data, errData := usecase.activitiesData.CreateData(data)
+	if errData != nil {
+		return event.Core{}, errData
 	}
 
-	return row
+	return data, nil
 }
 
-func (usecase *activitiesUsecase) PutData(data event.Core) int {
-	row := usecase.activitiesData.UpdateData(data)
-	if row == -1 {
-		return -1
+func (usecase *activitiesUsecase) PutData(data event.Core) (event.Core, error) {
+	data, err := usecase.activitiesData.UpdateData(data)
+	if err != nil {
+		return event.Core{}, err
 	}
 
-	return row
+	return data, nil
 
 }

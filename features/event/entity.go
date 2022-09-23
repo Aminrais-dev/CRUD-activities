@@ -1,24 +1,26 @@
 package event
 
+import "time"
+
 type Core struct {
-	ID           uint
-	ActivityType string
-	Institution  string
-	When         string
-	Objective    string
-	Remarks      string
+	ID           uint      `json:"id"`
+	ActivityType string    `json:"activity type"`
+	Institution  string    `json:"institution"`
+	When         time.Time `json:"when"`
+	Objective    string    `json:"objective"`
+	Remarks      string    `json:"remarks"`
 }
 
 type DataInterface interface {
 	SelectAll() ([]Core, error)
 	SelectById(param int) (Core, error)
-	UpdateData(Core) int
-	CreateData(Core) int
+	UpdateData(Core) (Core, error)
+	CreateData(Core) (Core, error)
 }
 
 type UsecaseInterface interface {
 	GetAll() ([]Core, error)
 	GetById(param int) (Core, error)
-	PutData(Core) int
-	PostData(Core) int
+	PutData(Core) (Core, error)
+	PostData(Core) (Core, error)
 }
