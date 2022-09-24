@@ -65,6 +65,8 @@ func (delivery *ActivitiesDelivery) GetByIdData(c echo.Context) error {
 	data, errGet := delivery.activitiesUsecase.GetById(ID)
 	if errGet != nil {
 		return c.JSON(400, helper.FailedResponseHelper("error get by id data"))
+	} else if data.ID == 0 {
+		return c.JSON(200, "id not found")
 	}
 
 	return c.JSON(200, data)

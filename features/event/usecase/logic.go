@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"project/e-commerce/features/event"
 )
 
@@ -32,7 +33,7 @@ func (usecase *activitiesUsecase) GetById(id int) (event.Core, error) {
 
 func (usecase *activitiesUsecase) PostData(data event.Core) (event.Core, error) {
 	if data.ActivityType == "" || data.Institution == "" || data.Objective == "" || data.Remarks == "" {
-		return event.Core{}, nil
+		return event.Core{}, errors.New("error")
 	}
 
 	data, errData := usecase.activitiesData.CreateData(data)
